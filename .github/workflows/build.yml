@@ -1,40 +1,41 @@
-name: Android Build
+name: Android 15 Build
 on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Install System Dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip autoconf autotools-dev libtool pkg-config zlib1g-dev \
-          python3-setuptools python3-pip python3-dev build-essential libncurses5-dev \
-          libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget curl \
-          libsqlite3-dev tk-dev libgdbm-compat-dev liblzma-dev lld \
-          libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
-          libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
-          libjpeg-dev libpng-dev libfreetype6-dev
+          python3-pip python3-dev build-essential libncurses5-dev libgdbm-dev libnss3-dev \
+          libssl-dev libreadline-dev libffi-dev wget curl libsqlite3-dev tk-dev \
+          libgdbm-compat-dev liblzma-dev lld libsdl2-dev libsdl2-image-dev \
+          libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev \
+          libavformat-dev libavcodec-dev libjpeg-dev libpng-dev libfreetype6-dev \
+          libharfbuzz-dev libharfbuzz-gobject0
 
       - name: Install Python Tools
         run: |
           pip install --upgrade pip
-          pip install --user --upgrade Cython==0.29.33 buildozer
+          pip install --user --upgrade Cython==3.0.11 buildozer
 
       - name: Build APK
         run: |
           export PATH=$PATH:$HOME/.local/bin
+          # Auto-accept all Android 15 licenses
           yes | buildozer -v android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MiningApp-Final-Artifact
+          name: MiningApp-Android15-APK
           path: bin/*.apk
